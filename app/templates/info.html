@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="AI Music Generator, ​Enter any number between 0 to 86 which will be given as initial charcter to model for generating sequence:, Problem Statement, ​Representation of music (data), Dataset and data cleaning, ​char-RNN model, ​char-LSTM model, Samples, Meet our team">
+    <meta name="description" content="">
+    <meta name="page_type" content="np-template-header-footer-from-plugin">
+    <title>information</title>
+<!--     <link rel="stylesheet" href="nicepage.css" media="screen">
+<link rel="stylesheet" href="Home.css" media="screen"> -->
+    
+        <link rel="stylesheet" href="{{ url_for('static', filename='nicepage.css') }}" media="screen">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}" media="screen">
+                                                                                      
+                                                                                      
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 3.24.3, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i">
+    
+    
+    
+    
+    
+    
+    
+    <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": ""
+}</script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Home">
+    <meta property="og:type" content="website">
+  </head>
+  <body class="u-body">
+       <header class="u-clearfix u-header u-header u-white">
+      
+      <div class="u-clearfix u-sheet u-valign-bottom u-sheet-1">
+
+        
+                     <ul class="u-align-left u-nav u-popupmenu-items u-unstyled u-nav-2">
+                       <li class="u-nav-item">
+                                 <img class="u-image u-image-default u-preserve-proportions u-image-1" 
+             src="{{ url_for('static', filename='images/aicamplogo.png')}}"
+ alt="" data-image-width="128" data-image-height="130">
+                         
+                       </li>
+                       <li class="u-nav-item">
+                         <a class="u-button-style u-nav-link" href="{{ url_for('home') }}" style="padding: 10px 20px;">Generator</a></li> 
+                                              <li class="u-nav-item"><a class="u-button-style u-nav-link" href="{{ url_for('info') }}" style="padding: 10px 20px;">Information or process</a></li> 
+                       
+                       <li class="u-nav-item">
+                         <a class="u-button-style u-nav-link" href="{{ url_for('samples') }}" style="padding: 10px 20px;">Samples</a></li>
+                       
+                                              <li class="u-nav-item">
+                         <a class="u-button-style u-nav-link" href="{{ url_for('team') }}" style="padding: 10px 20px;">Team</a></li>
+                       
+        </ul>
+      </div></header>
+    
+<!--     <section class="u-clearfix u-image u-shading u-section-1" id="sec-3bb6" data-image-width="640" data-image-height="420">
+      <div class="u-align-left-lg u-align-left-md u-align-left-sm u-align-left-xs u-clearfix u-sheet u-valign-middle-xl u-sheet-1">
+        <h1 class="u-text u-text-default u-title u-text-1">AI Music Generator</h1>
+        <h4 class="u-align-center-lg u-align-center-md u-align-center-sm u-align-center-xs u-text u-text-default-xl u-text-2"><b>Generate music automatically using both Recurrent Network (RNN) or Long Short-term Memory Network (LSTM)</b>
+        </h4>
+      </div>
+    </section> -->
+    
+   
+    
+    
+    
+    
+    <section class="u-black u-clearfix u-section-3" id="sec-8a08">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-align-left u-text u-text-default u-text-1">Problem Statement</h1>
+        <p class="u-align-left u-text u-text-default u-text-2">Our project is to take existing music data, and use it to then train a model. The model has to learn the patterns in music that we humans enjoy. Once it learns this, the model should be able to generate new music for us. It cannot simply copy-paste from the training data. It has to understand the patterns of music to generate new music.&nbsp;<br>
+          <br>We are not expecting our model to generate new music of professional quality, but we want it to generate decent quality music which should be melodious and nice to hear.<br>
+          <br>Now, what is music? Music is nothing but a sequence of musical notes. Our input to the model is a sequence of musical notes. Our output will be a new sequence of musical notes. In this project, we have limited ourselves to single instrument music.&nbsp;<br>
+        </p>
+        <img class="u-image u-image-default u-image-1" 
+             src="{{ url_for('static', filename='images/ScreenShot2021-09-11at10.36.54PM.png')}}"
+             alt="" data-image-width="1240" data-image-height="604">
+      </div>
+    </section>
+    <section class="u-clearfix u-section-4" id="sec-1709">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <div class="u-clearfix u-layout-wrap u-layout-wrap-1">
+          <div class="u-gutter-0 u-layout" style="">
+            <div class="u-layout-row" style="">
+              <div class="u-container-style u-layout-cell u-size-60 u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <p class="u-text u-text-default u-text-1">
+                    <span style="font-weight: 700;">a. Sheet music. </span>The image below is a representation of music which is known as sheet music. Here, music is represented by a sequence of musical notes. Each musical note is separated by a space. Music sheets can be used to represent both a single instrument and multi instrumental music.
+                  </p>
+                  <p class="u-text u-text-2">
+                    <span style="font-weight: 700;">b. abc notation.</span> There are two parts in ABC-notation (see image below).&nbsp;<br>
+                    <br>
+                    <span style="font-weight: 700;">Part-1</span> represents meta data. Lines in the Part-1 of the tune notation, begin with a letter followed by a colon, indicating various aspects of the tune such as the index, when there are more than one tune in a file (X:), the title (T:), the time signature (M:), the default note length (L:), the type of tune (R:) and the key (K:).<br>
+                    <br>
+                    <span style="font-weight: 700;">Part-2</span> represents the tune, a sequence of characters where each character represents some musical note.<br>
+                  </p>
+                  <img class="u-image u-image-default u-image-1" 
+                       src="{{ url_for('static', filename='images/abc.png')}}"alt="" data-image-width="428" data-image-height="227">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h1 class="u-text u-text-default u-text-3"> Representation of music (data)&nbsp;</h1>
+        <img class="u-image u-image-default u-image-2" 
+             src="{{ url_for('static', filename='images/sheet.png')}}"
+             alt="" data-image-width="944" data-image-height="350">
+      </div>
+    </section>
+    <section class="u-black u-clearfix u-section-5" id="sec-055c">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-text u-text-default u-text-1">Dataset and data cleaning</h1>
+        <p class="u-text u-text-default u-text-2"> Our dataset is the ABC version of the Nottingham Music Database (source: http://abc.sourceforge.net/NMD/). For the data-cleaning part: <br>
+          <span style="font-weight: 700;">1. We made the chord notation more consistent and easily parsable by:</span>
+          <br>a. Removing uninterpretable symbols (e.g. `"/@&lt;.5A7"`)<br>b. Using one single format for diminished/augmented/over-note notation (`"Cd"` for diminished, `"Ca"` for augmented and `"C/e"` for a C chord over E)<br>
+          <span style="font-weight: 700;">2. We made the repeat notation more machine-readable by:</span>
+          <br>a. Adding beginning-of-repeat symbols (`|:`) whenever their position might be programmatically ambiguous<br>b. Uniforming the first and second time bar notation (some pieces were using only the numbers `1` and `2`, others the symbols `[1` and `[2`; we opted for the second)<br>c. Adding double bars `||` at the end of all second time bars, to make it more transparent which notes are part of a repetition structure and which are not.<br>
+          <span style="font-weight: 700;">3. We expanded the usage of the part name notation, and used it to encode for other score notations that are not easily machine-interpretable:</span>
+          <br>a. We modified slightly the usage of the `P` metadata, allowing us to distinguish easily between a single part name (`P`) and the piece part playing sequence (new piece metadata label `Y`), which in the originals are both under the same tag `P`<br>b. Substituted all notations of "Da Capo al Segno" or "Dal Segno" with a corresponding part subdivision and playing repetition.<br>
+          <span style="font-weight: 700;">4. We also removed the lyrics from the few pieces.</span>
+          <br>
+          <br><b>5. We fed data into batches, and we fed batches of sequences into our RNN model (in next section).</b> First we construct our batches. We have set following parameters:<br><b>a. Batch Size = 16<br>b. Sequence Length = 64</b>
+          <br>We have found out that there are <b>total of 155222 characters in our data</b>. <b>There is a total number of 87 unique characters</b>. We have assigned a numerical index to each unique character. We have created a dictionary where each key belongs to a character, with it's value being it's index. We have also created an opposite of it, where key belongs to index and it's value is it’s character.<br>
+        </p>
+        <div class="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-col">
+              <div class="u-container-style u-layout-cell u-size-27 u-layout-cell-1">
+                <div class="u-container-layout u-valign-top u-container-layout-1">
+                  <img class="u-image u-image-default u-image-1" 
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-11at10.58.47PM.png')}}"
+ alt="" data-image-width="1262" data-image-height="924">
+                </div>
+              </div>
+              <div class="u-container-style u-layout-cell u-size-33 u-layout-cell-2">
+                <div class="u-container-layout u-container-layout-2">
+                  <img class="u-image u-image-default u-image-2" 
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-12at9.28.11PM.png')}}"
+ alt="" data-image-width="1958" data-image-height="392">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="u-clearfix u-white u-section-6" id="sec-8f6c">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-text u-text-default u-text-1"><b>char-RNN model&nbsp;<br></b>
+        </h1>
+        <p class="u-text u-text-default u-text-2">Since our music input is now a sequence of characters, we think that&nbsp; RNN is a good choice to start with since it can process sequence information very well by understanding the patterns in the input.<br>
+          <br> There is a special type of RNN called char RNN.&nbsp;Now our music is a sequence of characters. We will feed one after the other character of the sequence to RNN, and the output will be the next character in the sequence.&nbsp;<br>
+          <br>Since, our music is a combination of many characters, and our output is one of those characters, it can be thought of as a multi-class classification problem. Here, we will use “Categorical Cross-Entropy” as a loss function. In the last layer, we will keep the “Softmax” activations. The number of “Softmax” activation units in the last layer will be equal to the number of all unique characters in all of the music in train data. Each RNN can contain a ‘tanh’ activation unit at input-gate. This RNN structure can be trained using back-propagation and we keep on iterating it using the “Adam” optimizer to minimize error. At the end, our RNN will be able to learn the sequence and patterns of all the musical notes that are given to it as input during training.<br>
+          <br>Once our char RNN model is trained, we will then give any one random character — from the set of unique characters that we feed to our char RNN during training time — to our trained char RNN, it will then generate characters automatically which will be based on the sequences and patterns that it has learned during training phase.<br>
+        </p>
+        <div class="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout" style="">
+            <div class="u-layout-row" style="">
+              <div class="u-container-style u-layout-cell u-size-39 u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <img class="u-image u-image-default u-image-1" 
+                       src="{{ url_for('static', filename='images/go8PHsPNbbV6qRiwpUQ5BQ.png')}}"
+alt="" data-image-width="627" data-image-height="211">
+                </div>
+              </div>
+              <div class="u-container-style u-layout-cell u-size-21 u-layout-cell-2">
+                <div class="u-container-layout u-valign-top u-container-layout-2">
+                  <img class="u-image u-image-default u-image-2" 
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-12at9.17.54PM.png')}}"
+ alt="" data-image-width="634" data-image-height="770">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="u-text u-text-default u-text-3">Figure on the&nbsp;right above shows how the model generates an output sequence. We give “C1 '' as an input to our trained RNN. Note, that “C1 '' is a character which should be present in the set of the characters that we feed to our char RNN during training time. Now our trained char RNN will generate output “C2 ''. This “C2 '' output is the feedback and is inputted again to the trained char RNN. This will generate “C3'' as an output. This “C3 '' output is the feedback and is inputted again to the trained char RNN and so on. Now we have a new sequence of music [C1, C2, C3…]. This new sequence is completely new music generated by our trained char RNN which is based on the sequences and patterns that it has learned during the training phase.<br>
+          <br>The yellow box is a single RNN unit. In our RNN model, there are 256&nbsp;RNN Units in one layer of an RNN model. And We have&nbsp;three&nbsp;such RNN layers each having 256 RNN units. At each time step all of the RNN units generate output which will be an input to all of the RNN units in next layer and so on.<br>
+          <br>After three such layers of RNN, we have applied <span style="font-weight: 700;">‘TimeDistributed’ dense layers with “Softmax” activations </span>in it. Since the shape of each output after third RNN layer is (16*64*256). We have 87 unique characters in our dataset and we want that the output at each time-stamp will be a next character in the sequence which is one of the 87 characters. So, the time-distributed dense layer contains 87 “Softmax” activations and it creates a dense connection at each time-stamp. Finally, it will generate 87 dimensional output at each time-stamp which will be equivalent to 87 probability values. The final output will be the character with the highest probablity.&nbsp;<br>
+          <br>We trained our RNN model 100 epochs, and the <span style="font-weight: 700;">highest accuracy is 76.7578%.&nbsp;<span style="font-weight: 400;"> However, in order to generate melodious music, we need at least 90% accuracy. So, we must look at our LSTM model next.&nbsp;</span>
+          </span>
+        </p>
+        <img class="u-image u-image-default u-image-3" src="{{ url_for('static', filename='images/a.png')}}" alt="" data-image-width="627" data-image-height="292">
+      </div>
+    </section>
+    <section class="u-clearfix u-white u-section-7" id="sec-f3fb">
+      <div class="u-clearfix u-sheet u-sheet-1">
+        <h1 class="u-text u-text-default u-text-1"><b>char-LSTM model&nbsp;</b>
+        </h1>
+        <p class="u-text u-text-default u-text-2">As we mentioned above, the highest accuracy of our RNN model above is 76.7578%. Thus, we consider LSTM model to be our best model, improving the accuracy.&nbsp;​LSTM has different gates which regulate the information so that the network knows where to store data, and where to forget the data.&nbsp;<br>
+          <br>The left below figure illustrates a single RNN unit; middle below figure shows a single LSTM unit, where the red circle and blue circle represent sigmoid and tanh function.&nbsp;<br>
+        </p>
+        <div class="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
+          <div class="u-layout">
+            <div class="u-layout-row">
+              <div class="u-container-style u-layout-cell u-size-17 u-layout-cell-1">
+                <div class="u-container-layout u-container-layout-1">
+                  <img class="u-image u-image-default u-image-1"
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-12at10.39.56PM.png')}}"
+ alt="" data-image-width="540" data-image-height="512">
+                </div>
+              </div>
+              <div class="u-container-style u-layout-cell u-size-20 u-layout-cell-2">
+                <div class="u-container-layout u-container-layout-2">
+                  <img class="u-image u-image-default u-image-2"
+                       
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-12at10.41.36PM.png')}}" alt="" data-image-width="860" data-image-height="690">
+                </div>
+              </div>
+              <div class="u-align-left u-container-style u-layout-cell u-size-23 u-layout-cell-3">
+                <div class="u-container-layout u-container-layout-3">
+                  <img class="u-image u-image-default u-image-3" 
+                       src="{{ url_for('static', filename='images/ScreenShot2021-09-12at10.40.38PM.png')}}"
+ alt="" data-image-width="1028" data-image-height="622">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="u-text u-text-default u-text-3">In our LSTM model, there are 256&nbsp;LSTM Units in one layer, and 3 layers in total. At each time-stamp, all of the LSTM units generate an output which will become an input to all of the LSTM units in next layer and so on. After three such layers of LSTM, we have applied ‘TimeDistributed’ dense layers with “Softmax” activations.&nbsp; It will generate 87 dimensional outputs at each time-stamp, equivalent to 87 probability values. The character with the highest probablity will be chosen as the output.&nbsp;<br>
+          <br>We also trained our LSTM model 100 epochs, and the highest accuracy is 91.9922%.&nbsp; 
+        </p>
+        <img class="u-image u-image-default u-image-4" 
+             src="{{ url_for('static', filename='images/b.png')}}"
+ alt="" data-image-width="632" data-image-height="292">
+      </div>
+    </section>
+
+
+    
+    
+
+    
+    
+  </body>
+</html>
